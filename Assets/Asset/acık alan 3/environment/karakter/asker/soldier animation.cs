@@ -1,61 +1,65 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 
 public class EnemyBotController : MonoBehaviour
 {
     [Header("References")]
-    public Transform player; // XR Origin karakteri
+    public Transform target;
     public Animator animator;
 
-    [Header("Vision Settings")]
-    public float smallRadius = 25f;  // Küçük kürenin yarýçapý
-    public float largeRadius = 50f;  // Büyük kürenin yarýçapý
-    public float visionAngle = 100f; // Küre diliminin açýsý
-    public string targetTag = "Player"; // Tetiklenecek objenin etiketi (örneðin Player)
+    [Header("Settings")]
+    public float visionAngle = 100f;
+    public float visionRadius = 25f;
+    public int maxAmmo = 30;
+    public float reloadTime = 2f;
 
-    [Header("Animation States")]
-    public string idleState = "Idle";       // Boþta durma animasyonu
-    public string firingState = "Firing";  // Ateþ etme animasyonu
-    public string runningState = "Running"; // Koþma animasyonu
+    private int currentAmmo;
+    private bool isReloading;
 
-    private bool isPlayerDetected = false; // Oyuncunun algýlanýp algýlanmadýðýný kontrol eder
-    private static Vector3 lastFiringPosition; // Ateþ eden botun pozisyonunu saklar
-
-    void Update()
+    private void Start()
     {
-        // Küçük küre içinde hedefi algýla
-        if (IsTargetInVisionArea())
+        currentAmmo = maxAmmo;
+        isReloading = false;
+    }
+
+    private void Update()
+    {
+        if (isReloading) return;
+
+        bool inSight = IsTargetInSight();
+
+        if (inSight)
         {
-            isPlayerDetected = true;
-            TriggerFiring();
+            if (currentAmmo > 0)
+            {
+                animator.SetBool("Firing", true);
+                animator.SetBool("Run", false);
+                Fire();
+            }
+            else
+            {
+                StartCoroutine(Reload());
+            }
         }
         else
         {
-            isPlayerDetected = false;
-            TriggerIdle();
+            animator.SetBool("Firing", false);
+            animator.SetBool("Run", true);
         }
 
-        // Büyük küre içinde diðer botlarý tetikle
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName(firingState))
-        {
-            lastFiringPosition = transform.position;
-            NotifyNearbyBots();
-        }
+        animator.SetBool("Idle", !inSight && !animator.GetBool("Run"));
     }
 
-    bool IsTargetInVisionArea()
+    private bool IsTargetInSight()
     {
-        // Küçük küre içinde hedef objeleri kontrol eder
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, smallRadius);
-        foreach (var hitCollider in hitColliders)
+        Collider[] colliders = Physics.OverlapSphere(transform.position, visionRadius);
+        foreach (var collider in colliders)
         {
-            if (hitCollider.CompareTag(targetTag)) // Etiket hedefi kontrol eder
+            if (collider.transform == target)
             {
-                Vector3 directionToTarget = hitCollider.transform.position - transform.position;
+                Vector3 directionToTarget = target.position - transform.position;
                 float angleToTarget = Vector3.Angle(transform.forward, directionToTarget);
 
-                // Eðer hedef belirtilen açý içindeyse
                 if (angleToTarget <= visionAngle / 2f)
                 {
                     return true;
@@ -65,66 +69,36 @@ public class EnemyBotController : MonoBehaviour
         return false;
     }
 
-    void NotifyNearbyBots()
+    private void Fire()
     {
-        // Büyük küre içinde diðer botlarý tetikle
-        Collider[] nearbyBots = Physics.OverlapSphere(transform.position, largeRadius);
-        foreach (var bot in nearbyBots)
+        currentAmmo--;
+        if (currentAmmo <= 0)
         {
-            if (bot.CompareTag("Enemy") && bot.gameObject != this.gameObject)
-            {
-                EnemyBotController botController = bot.GetComponent<EnemyBotController>();
-                if (botController != null)
-                {
-                    botController.TriggerRunning(lastFiringPosition);
-                }
-            }
+            animator.SetBool("Firing", false);
+            StartCoroutine(Reload());
         }
     }
 
-    void TriggerFiring()
+    private IEnumerator Reload()
     {
-        animator.Play(firingState); // Ateþ etme animasyonu baþlat
+        isReloading = true;
+        animator.SetBool("Reload", true);
+        yield return new WaitForSeconds(reloadTime);
+        currentAmmo = maxAmmo;
+        animator.SetBool("Reload", false);
+        isReloading = false;
     }
 
-    void TriggerIdle()
+    private void OnDrawGizmosSelected()
     {
-        animator.Play(idleState); // Boþta durma animasyonu baþlat
-    }
-
-    public void TriggerRunning(Vector3 targetPosition)
-    {
-        animator.Play(runningState); // Koþma animasyonu baþlat
-        StartCoroutine(MoveToPosition(targetPosition));
-    }
-
-    IEnumerator MoveToPosition(Vector3 targetPosition)
-    {
-        float speed = 5f; // Koþma hýzý
-        while (Vector3.Distance(transform.position, targetPosition) > 0.1f)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
-            yield return null;
-        }
-    }
-
-    void OnDrawGizmos()
-    {
-        // Küçük küreyi çiz
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, smallRadius);
+        Gizmos.DrawWireSphere(transform.position, visionRadius);
 
-        // Büyük küreyi çiz
+        Vector3 leftBoundary = Quaternion.Euler(0, -visionAngle / 2f, 0) * transform.forward * visionRadius;
+        Vector3 rightBoundary = Quaternion.Euler(0, visionAngle / 2f, 0) * transform.forward * visionRadius;
+
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, largeRadius);
-
-        // Görüþ açýsýný çiz
-        Vector3 leftBoundary = Quaternion.Euler(0, -visionAngle / 2f, 0) * transform.forward * smallRadius;
-        Vector3 rightBoundary = Quaternion.Euler(0, visionAngle / 2f, 0) * transform.forward * smallRadius;
-
-        Gizmos.color = Color.green;
         Gizmos.DrawLine(transform.position, transform.position + leftBoundary);
         Gizmos.DrawLine(transform.position, transform.position + rightBoundary);
     }
 }
-
