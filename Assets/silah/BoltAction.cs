@@ -30,7 +30,7 @@ public class BoltAction : MonoBehaviour
             Debug.Log("Kurma kolu çekildi.");
 
             // Þarjörü yeniden doldur
-            gunController?.ReloadMagazine();
+            gunController?.ChamberRound(); // Mermiyi yataða sür
         }
     }
 
