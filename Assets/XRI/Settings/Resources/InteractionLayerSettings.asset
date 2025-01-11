@@ -16,6 +16,8 @@ MonoBehaviour:
   - Default
   - 
   - 
+  - Bullet
+  - MagazineLayer
   - 
   - 
   - 
@@ -42,6 +44,4 @@ MonoBehaviour:
   - 
   - 
   - 
-  - 
-  - 
-  - 
+  - Teleport

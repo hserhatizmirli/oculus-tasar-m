@@ -839,8 +839,8 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: "oculus tasar\u0131m"
-  metroPackageVersion: 
+  metroPackageName: 
+  metroPackageVersion: 1.0.0.0
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
@@ -848,7 +848,7 @@ PlayerSettings:
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: "oculus tasar\u0131m"
   wsaImages: {}
-  metroTileShortName: 
+  metroTileShortName: "oculus tasar\u0131m"
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0

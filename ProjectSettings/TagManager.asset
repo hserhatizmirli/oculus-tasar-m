@@ -3,7 +3,16 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - 9puan
+  - 10puan
+  - 5puan
+  - 4puan
+  - 8paun
+  - 7puan
+  - 6puan
+  - Magazine
+  - shotgun mermi
   layers:
   - Default
   - TransparentFX
@@ -23,7 +32,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - MagazineLayer
   - 
   - 
   - 
