@@ -13,14 +13,16 @@ TagManager:
   - 6puan
   - Magazine
   - shotgun mermi
+  - kurma kolu
+  - hsnf
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - weapon
   - Water
   - UI
-  - 
+  - shotgun
   - 
   - 
   - 
