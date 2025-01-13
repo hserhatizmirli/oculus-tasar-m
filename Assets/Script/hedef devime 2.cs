@@ -16,8 +16,8 @@ public class TargetXRInteraction : MonoBehaviour
 
         if (grabInteractable != null)
         {
-            // XR Interactable için Select Enter event'ini baðla
-            grabInteractable.onSelectEntered.AddListener(OnSelectEntered);
+            // Yeni API ile `selectEntered` olayýný dinliyoruz
+            grabInteractable.selectEntered.AddListener(OnSelectEntered);
         }
         else
         {
@@ -25,7 +25,7 @@ public class TargetXRInteraction : MonoBehaviour
         }
     }
 
-    void OnSelectEntered(XRBaseInteractor interactor)
+    void OnSelectEntered(SelectEnterEventArgs args)
     {
         // Eðer hedef nesneye týklanmýþsa ve daha önce taþýnmamýþsa
         if (!isClicked)

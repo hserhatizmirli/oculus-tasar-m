@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
@@ -17,12 +18,17 @@ public class TargetXRI : MonoBehaviour
         if (grabInteractable != null)
         {
             // XR Interactable için Select Enter event'ini baðla
-            grabInteractable.onSelectEntered.AddListener(OnSelectEntered);
+            grabInteractable.selectEntered.AddListener(OnSelectEntered);
         }
         else
         {
             Debug.LogError("XRGrabInteractable bileþeni eksik!");
         }
+    }
+
+    private void OnSelectEntered(SelectEnterEventArgs arg0)
+    {
+        throw new NotImplementedException();
     }
 
     void OnSelectEntered(XRBaseInteractor interactor)

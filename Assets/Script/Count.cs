@@ -10,6 +10,13 @@ public class CounterScript : MonoBehaviour
 
     void Start()
     {
+        // Null kontrolü ekleyin
+        if (counterText == null || congratsText == null)
+        {
+            Debug.LogError("Bir veya daha fazla TMP_Text bileþeni atanmadý!");
+            return;
+        }
+
         UpdateCounter(); // Sayacý güncelle
         congratsText.gameObject.SetActive(false); // Tebrikler Text'ini gizle
     }

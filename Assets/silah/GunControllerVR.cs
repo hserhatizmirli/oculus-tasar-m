@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit;
 
-public class GunControllerVR : XRGrabInteractable
+public class GunControllerVR : MonoBehaviour
 {
     [Header("Gun Settings")]
     public GameObject bulletPrefab; // Mermi prefabý
@@ -21,8 +20,8 @@ public class GunControllerVR : XRGrabInteractable
 
     private void Update()
     {
-        // VR kontrolcüsünde ateþleme butonuna basýldýðýnda ateþ et
-        if (isSelected && isFiring) // Silah seçili olduðunda ve tetikleme yapýldýðýnda
+        // Ateþleme durumu aktifse ateþ et
+        if (isFiring)
         {
             Fire();
         }
